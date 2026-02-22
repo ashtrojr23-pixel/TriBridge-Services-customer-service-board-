@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TriBridge Auto-Reply Setup Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C9A84C; --gold-light:#F0D080; --gold-dark:#8B6914;
+  --crimson:#8B0000; --ink:#1A0A00;
+  --bg:#0D0700; --bg2:#1A0E05; --bg3:#261708;
+  --parchment:#F5E6C8; --parchment2:#DEC89A;
+  --green:#25d366; --green2:#128C7E;
+  --pink:#E1306C; --pink2:#833AB4;
+  --blue:#4285F4; --blue2:#34A853;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--parchment);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at top,rgba(201,168,76,0.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+/* HEADER */
+.site-header{text-align:center;padding:60px 5% 40px;position:relative;z-index:1;border-bottom:1px solid rgba(201,168,76,0.2);}
+.site-header h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;background:linear-gradient(135deg,var(--gold-dark),var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;}
+.site-header p{font-family:'EB Garamond',serif;font-style:italic;color:var(--parchment2);font-size:1.1rem;opacity:0.85;}
+.header-ornament{width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:20px auto 0;position:relative;}
+.header-ornament::before{content:'◆';position:absolute;top:-8px;left:50%;transform:translateX(-50%);color:var(--gold);font-size:0.8rem;background:var(--bg);padding:0 6px;}
+
+/* NAV TABS */
+.tabs{display:flex;justify-content:center;gap:12px;padding:30px 5% 0;flex-wrap:wrap;position:relative;z-index:1;}
+.tab{padding:10px 28px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:1px solid rgba(201,168,76,0.3);color:var(--parchment2);background:rgba(201,168,76,0.05);transition:all 0.3s;border-radius:2px;}
+.tab:hover{border-color:var(--gold);color:var(--gold);}
+.tab.active{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700;}
+.tab.wa{border-color:rgba(37,211,102,0.3);}
+.tab.wa.active{background:var(--green);border-color:var(--green);color:white;}
+.tab.ig{border-color:rgba(225,48,108,0.3);}
+.tab.ig.active{background:linear-gradient(135deg,var(--pink2),var(--pink));border-color:var(--pink);color:white;}
+
+/* PANELS */
+.panel{display:none;padding:40px 5%;max-width:900px;margin:0 auto;position:relative;z-index:1;}
+.panel.active{display:block;}
+
+/* PLATFORM BADGE */
+.platform-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border-radius:50px;font-size:0.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;}
+.badge-gmail{background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.4);color:#4285F4;}
+.badge-wa{background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.4);color:var(--green);}
+.badge-ig{background:rgba(225,48,108,0.12);border:1px solid rgba(225,48,108,0.4);color:var(--pink);}
+
+/* SETUP STEPS */
+.setup-steps{margin-bottom:40px;}
+.step{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start;}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--ink);font-weight:700;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-text{color:var(--parchment2);font-size:0.95rem;line-height:1.7;padding-top:4px;}
+.step-text strong{color:var(--gold);font-weight:600;}
+.step-text a{color:var(--gold-light);text-decoration:underline;}
+
+/* REPLY CARDS */
+.reply-card{background:linear-gradient(135deg,rgba(61,43,31,0.5),rgba(26,14,5,0.9));border:1px solid rgba(201,168,76,0.3);border-radius:4px;margin-bottom:24px;overflow:hidden;position:relative;}
+.reply-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gradient-top);}
+.reply-card.counsel{--gradient-top:linear-gradient(90deg,#7B4ACB,#B68AEA);}
+.reply-card.web{--gradient-top:linear-gradient(90deg,#D4650A,#F5B942);}
+.reply-card.french{--gradient-top:linear-gradient(90deg,#0E7C7B,#1AA5A3);}
+.reply-card.general{--gradient-top:linear-gradient(90deg,var(--gold-dark),var(--gold-light));}
+
+.reply-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(201,168,76,0.15);}
+.reply-label{display:flex;align-items:center;gap:10px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.85rem;color:var(--gold-light);letter-spacing:0.5px;}
+.reply-label .dot{width:8px;height:8px;border-radius:50%;}
+.dot-counsel{background:#B68AEA;}
+.dot-web{background:#F5B942;}
+.dot-french{background:#1AA5A3;}
+.dot-general{background:var(--gold);}
+
+.copy-btn{padding:6px 16px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;border-radius:2px;}
+.copy-btn:hover{background:var(--gold);color:var(--ink);}
+.copy-btn.copied{background:#25d366;border-color:#25d366;color:white;}
+
+.reply-body{padding:20px;font-family:'EB Garamond',serif;font-size:1rem;line-height:1.85;color:var(--parchment2);white-space:pre-wrap;position:relative;}
+.reply-keywords{padding:0 20px 16px;display:flex;flex-wrap:wrap;gap:8px;}
+.kw{padding:4px 12px;border-radius:50px;font-size:0.72rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.kw-counsel{background:rgba(123,74,203,0.15);color:#B68AEA;border:1px solid rgba(123,74,203,0.3);}
+.kw-web{background:rgba(212,101,10,0.15);color:#F5B942;border:1px solid rgba(212,101,10,0.3);}
+.kw-french{background:rgba(14,124,123,0.15);color:#1AA5A3;border:1px solid rgba(14,124,123,0.3);}
+.kw-general{background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.25);}
+
+/* SUBJECT LINE */
+.subject-block{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:4px;padding:14px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.subject-label{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:4px;}
+.subject-text{font-family:'EB Garamond',serif;color:var(--parchment);font-size:0.95rem;}
+
+/* DIVIDER */
+.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent);margin:32px 0;}
+.section-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px;}
+.section-sub{font-family:'EB Garamond',serif;font-style:italic;color:var(--parchment2);font-size:0.92rem;margin-bottom:24px;opacity:0.8;}
+
+/* NOTE BOX */
+.note{background:rgba(37,211,102,0.06);border:1px solid rgba(37,211,102,0.2);border-left:3px solid #25d366;padding:14px 18px;border-radius:2px;margin-bottom:20px;font-size:0.88rem;color:var(--parchment2);line-height:1.7;}
+.note.gold{background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.2);border-left-color:var(--gold);}
+.note strong{color:var(--gold);}
+</style>
+</head>
+<body>
+<div class="site-header">
+  <h1>TriBridge Auto-Reply System</h1>
+  <p>Smart, service-specific replies for Gmail · WhatsApp · Instagram</p>
+  <div class="header-ornament"></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPanel('gmail')">✉️ &nbsp; Gmail</div>
+  <div class="tab wa" onclick="showPanel('whatsapp')">📱 &nbsp; WhatsApp</div>
+  <div class="tab ig" onclick="showPanel('instagram')">📷 &nbsp; Instagram</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--              GMAIL PANEL               -->
+<!-- ═══════════════════════════════════════ -->
+<div class="panel active" id="panel-gmail">
+  <br>
+  <div class="platform-badge badge-gmail">✉️ &nbsp; Gmail — servicestribridge@gmail.com</div>
+
+  <div class="setup-steps">
+    <h3 class="section-title">How to Set Up Gmail Auto-Reply</h3>
+    <p class="section-sub">Follow these steps once — it runs automatically forever.</p>
+    <div class="step"><div class="step-num">1</div><div class="step-text">Open <strong>Gmail</strong> → click the <strong>⚙ Settings gear</strong> (top right) → click <strong>"See all settings"</strong></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Click the <strong>"General"</strong> tab → scroll down to <strong>"Vacation responder"</strong></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Select <strong>"Vacation responder on"</strong> → set <strong>First day</strong> to today → leave <strong>Last day blank</strong> (runs forever)</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Paste the <strong>Subject line</strong> first, then the <strong>matching reply body</strong> below depending on what the client wrote about</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text">Tick <strong>"Only send a response to people in my Contacts"</strong> if you want — or leave unticked to reply to everyone</div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-text">Click <strong>"Save Changes"</strong> at the bottom — done ✦</div></div>
+  </div>
+
+  <div class="note gold">
+    <strong>Note:</strong> Gmail only has one auto-reply slot. Use the <strong>General reply</strong> below as your default. For service-specific replies, use <strong>Gmail Filters</strong> — set a filter for keywords like "counselling", "website", "translation" and assign each a canned response (Templates). Steps are shown below each reply.
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">📨 Gmail Reply — Counselling Enquiry</h3>
+  <p class="section-sub">Triggers when email contains: counselling, therapy, stress, session, mental, support</p>
+
+  <div class="subject-block">
+    <div><div class="subject-label">Subject Line</div><div class="subject-text">Re: Your Counselling Enquiry — TriBridge Services Will Be With You Shortly</div></div>
+    <button class="copy-btn" onclick="copyText(this,'Re: Your Counselling Enquiry — TriBridge Services Will Be With You Shortly')">Copy</button>
+  </div>
+
+  <div class="reply-card counsel">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-counsel"></div>Counselling Auto-Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'counsel-gmail')">Copy Reply</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-counsel">counselling</span>
+      <span class="kw kw-counsel">therapy</span>
+      <span class="kw kw-counsel">stress</span>
+      <span class="kw kw-counsel">session</span>
+      <span class="kw kw-counsel">support</span>
+    </div>
+    <div class="reply-body" id="counsel-gmail">Dear Valued Client,
+
+Thank you sincerely for reaching out to TriBridge Services regarding our Counselling & Support programme.
+
+Your message has been received and is in trusted hands. We understand that taking this step requires courage, and we want you to know that you are in a safe, professional, and completely confidential space.
+
+Here is what our Counselling Service offers:
+
+  ● Online sessions — conducted privately via WhatsApp or agreed platform
+  ● Professional & structured — drawing from a Counselling Psychology Certificate
+  ● Flexible scheduling — we work around your availability
+  ● Judgment-free environment — your story is safe with us
+
+SESSION RATES:
+  ▸ Single session (1 hour) .............. KES 800
+  ▸ 4-session package ..................... KES 2,800
+  ▸ Ongoing monthly support .............. KES 5,000
+
+We will respond to you personally within 2 hours during business hours. For a faster response, you are welcome to reach us directly:
+
+  📱 WhatsApp: +254 759 858 428
+  🌐 Website:  https://tribridge-services.onrender.com
+  📷 Instagram: @tribridge_studios
+
+We look forward to supporting you.
+
+Warm regards,
+Ashraf Abdalla
+CEO & Founder — TriBridge Services
+"Speak It. Build It. Heal It."</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">📨 Gmail Reply — Web Design Enquiry</h3>
+  <p class="section-sub">Triggers when email contains: website, web, coding, HTML, design, page, portfolio</p>
+
+  <div class="subject-block">
+    <div><div class="subject-label">Subject Line</div><div class="subject-text">Re: Your Web Design Enquiry — TriBridge Services Will Be With You Shortly</div></div>
+    <button class="copy-btn" onclick="copyText(this,'Re: Your Web Design Enquiry — TriBridge Services Will Be With You Shortly')">Copy</button>
+  </div>
+
+  <div class="reply-card web">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-web"></div>Web Design Auto-Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'web-gmail')">Copy Reply</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-web">website</span>
+      <span class="kw kw-web">web</span>
+      <span class="kw kw-web">coding</span>
+      <span class="kw kw-web">HTML</span>
+      <span class="kw kw-web">design</span>
+    </div>
+    <div class="reply-body" id="web-gmail">Dear Valued Client,
+
+Thank you for contacting TriBridge Services regarding our Web Design & Development offering.
+
+Your enquiry has been received and we are delighted to assist you in building your digital presence. We deliver clean, professional, mobile-first websites that represent your brand with excellence.
+
+Here is what our Web Service offers:
+
+  ● Landing pages, portfolios & business websites
+  ● Mobile responsive — looks perfect on all devices
+  ● HTML coding guidance & assistance
+  ● Fast turnaround — most projects completed within 3–7 days
+  ● Ongoing support after delivery
+
+PRICING:
+  ▸ Landing Page (1–3 pages) ............. KES 15,000
+  ▸ Small Business Site (5 pages) ........ KES 25,000
+  ▸ Full Business Website ................ KES 50,000+
+
+We will respond personally within 2 hours. For a faster response or to share your project brief directly:
+
+  📱 WhatsApp: +254 759 858 428
+  🌐 Website:  https://tribridge-services.onrender.com
+  📷 Instagram: @tribridge_studios
+
+We look forward to building something great together.
+
+Warm regards,
+Ashraf Abdalla
+CEO & Founder — TriBridge Services
+"Speak It. Build It. Heal It."</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">📨 Gmail Reply — Translation Enquiry</h3>
+  <p class="section-sub">Triggers when email contains: translation, French, translate, assignment, document</p>
+
+  <div class="subject-block">
+    <div><div class="subject-label">Subject Line</div><div class="subject-text">Re: Your Translation Enquiry — TriBridge Services Will Be With You Shortly</div></div>
+    <button class="copy-btn" onclick="copyText(this,'Re: Your Translation Enquiry — TriBridge Services Will Be With You Shortly')">Copy</button>
+  </div>
+
+  <div class="reply-card french">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-french"></div>Translation Auto-Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'french-gmail')">Copy Reply</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-french">translation</span>
+      <span class="kw kw-french">French</span>
+      <span class="kw kw-french">translate</span>
+      <span class="kw kw-french">assignment</span>
+      <span class="kw kw-french">document</span>
+    </div>
+    <div class="reply-body" id="french-gmail">Dear Valued Client,
+
+Thank you for reaching out to TriBridge Services regarding our French Translation service.
+
+Your request has been received. We provide precise, natural-sounding French to English and English to French translations delivered promptly and professionally online.
+
+Here is what our Translation Service covers:
+
+  ● Academic assignments & school work
+  ● Business letters, emails & reports
+  ● Official documents & certificates
+  ● Proofreading & language correction
+  ● Urgent delivery available upon request
+
+RATES:
+  ▸ Per page (250 words) ................. KES 500
+  ▸ Full document (1,000+ words) ......... KES 1,500
+  ▸ Proofreading only .................... KES 300/page
+
+Please attach or describe your document when replying so we can provide an accurate quote and timeline. We aim to respond within 2 hours.
+
+For urgent requests, contact us directly:
+
+  📱 WhatsApp: +254 759 858 428
+  🌐 Website:  https://tribridge-services.onrender.com
+  📷 Instagram: @tribridge_studios
+
+We look forward to bridging the language gap for you.
+
+Warm regards,
+Ashraf Abdalla
+CEO & Founder — TriBridge Services
+"Speak It. Build It. Heal It."</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">📨 Gmail Reply — General Enquiry (Default)</h3>
+  <p class="section-sub">Use this as your main Vacation Responder — catches all other emails</p>
+
+  <div class="subject-block">
+    <div><div class="subject-label">Subject Line</div><div class="subject-text">Thank You for Contacting TriBridge Services — We'll Be With You Shortly ✦</div></div>
+    <button class="copy-btn" onclick="copyText(this,'Thank You for Contacting TriBridge Services — We\'ll Be With You Shortly ✦')">Copy</button>
+  </div>
+
+  <div class="reply-card general">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-general"></div>General Auto-Reply (Default)</div>
+      <button class="copy-btn" onclick="copyBlock(this,'general-gmail')">Copy Reply</button>
+    </div>
+    <div class="reply-body" id="general-gmail">Dear Valued Client,
+
+Thank you for contacting TriBridge Services. Your message has been received and is in good hands.
+
+We will respond to you personally within 2 hours during business hours.
+
+In the meantime, here is a brief overview of what we offer:
+
+  🧠 COUNSELLING & SUPPORT
+     Professional, confidential online counselling sessions.
+     From KES 800 per hour.
+
+  🌐 WEB DESIGN & DEVELOPMENT
+     Mobile-first websites, landing pages & HTML coding.
+     From KES 15,000.
+
+  🇫🇷 FRENCH TRANSLATION
+     Accurate French ↔ English translation, delivered online.
+     From KES 500 per page.
+
+For a faster response, reach us directly:
+
+  📱 WhatsApp: +254 759 858 428
+  🌐 Website:  https://tribridge-services.onrender.com
+  📷 Instagram: @tribridge_studios
+
+We look forward to serving you with excellence.
+
+Warm regards,
+Ashraf Abdalla
+CEO & Founder — TriBridge Services
+"Speak It. Build It. Heal It."</div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════ -->
+<!--           WHATSAPP PANEL               -->
+<!-- ═══════════════════════════════════════ -->
+<div class="panel" id="panel-whatsapp">
+  <br>
+  <div class="platform-badge badge-wa">📱 &nbsp; WhatsApp Business — +254 759 858 428</div>
+
+  <div class="setup-steps">
+    <h3 class="section-title">How to Set Up WhatsApp Business Auto-Reply</h3>
+    <p class="section-sub">Download WhatsApp Business (free) — separate from regular WhatsApp.</p>
+    <div class="step"><div class="step-num">1</div><div class="step-text">Download <strong>WhatsApp Business</strong> from Play Store or App Store — it's free</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Register with your number <strong>+254 759 858 428</strong> → set business name to <strong>TriBridge Services</strong></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Go to <strong>Settings → Business Tools → Greeting Message</strong> → turn ON → paste the Greeting reply below</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Go to <strong>Settings → Business Tools → Away Message</strong> → turn ON → set schedule to <strong>"Always send"</strong> → paste Away reply below</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text">Go to <strong>Settings → Business Tools → Quick Replies</strong> → create shortcuts for each service reply below using <strong>/counsel</strong>, <strong>/web</strong>, <strong>/french</strong></div></div>
+  </div>
+
+  <div class="note">
+    <strong>Quick Replies tip:</strong> When someone messages about a specific service, type the shortcut (e.g. <strong>/counsel</strong>) and WhatsApp will auto-fill the full reply. Saves you typing every time.
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">👋 Greeting Message</h3>
+  <p class="section-sub">Sent automatically when someone messages you for the first time</p>
+
+  <div class="reply-card general">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-general"></div>First Contact Greeting</div>
+      <button class="copy-btn" onclick="copyBlock(this,'wa-greeting')">Copy</button>
+    </div>
+    <div class="reply-body" id="wa-greeting">Hello and welcome to *TriBridge Services* ✦
+
+Thank you for reaching out. I am Ashraf — CEO & Founder of TriBridge Services.
+
+We offer three professional services:
+
+🧠 *Counselling* — confidential, online & professional
+🌐 *Web Development* — websites, landing pages & HTML coding
+🇫🇷 *Translation* — French ↔ English, assignments & documents
+
+Please tell me which service you are enquiring about and I will respond with full details and pricing immediately.
+
+🌐 _https://tribridge-services.onrender.com_
+
+— Ashraf | TriBridge Services
+_"Speak It. Build It. Heal It."_</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">🌙 Away Message</h3>
+  <p class="section-sub">Sent when you are offline or unavailable</p>
+
+  <div class="reply-card general">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-general"></div>Away / Offline Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'wa-away')">Copy</button>
+    </div>
+    <div class="reply-body" id="wa-away">Hello! Thank you for your message ✦
+
+I am currently unavailable but will respond to you personally within *2 hours*.
+
+*TriBridge Services* offers:
+🧠 Online Counselling — from KES 800/hr
+🌐 Web Development — from KES 15,000
+🇫🇷 French Translation — from KES 500/page
+
+Visit our website while you wait:
+🌐 _https://tribridge-services.onrender.com_
+
+— Ashraf | TriBridge Services
+_"Speak It. Build It. Heal It."_</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">⚡ Quick Reply — Counselling</h3>
+  <p class="section-sub">Shortcut: /counsel</p>
+
+  <div class="reply-card counsel">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-counsel"></div>Counselling Quick Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'wa-counsel')">Copy</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-counsel">shortcut: /counsel</span>
+    </div>
+    <div class="reply-body" id="wa-counsel">Thank you for your interest in our *Counselling & Support* service ✦
+
+Here is everything you need to know:
+
+✅ *What we offer:*
+- Online sessions — private, confidential & professional
+- Structured guidance from a Counselling Psychology Certificate holder
+- Flexible scheduling around your availability
+- Completely judgment-free environment
+
+💰 *Session Rates:*
+- Single session (1 hr) ............ KES 800
+- 4-session package ................ KES 2,800
+- Monthly ongoing support .......... KES 5,000
+
+To book your first session or ask any questions, simply reply here and we will arrange a convenient time for you.
+
+— Ashraf | TriBridge Services ⚜
+_"Speak It. Build It. Heal It."_</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">⚡ Quick Reply — Web Design</h3>
+  <p class="section-sub">Shortcut: /web</p>
+
+  <div class="reply-card web">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-web"></div>Web Design Quick Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'wa-web')">Copy</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-web">shortcut: /web</span>
+    </div>
+    <div class="reply-body" id="wa-web">Thank you for your interest in our *Web Design & Development* service ✦
+
+Here is everything you need to know:
+
+✅ *What we build:*
+- Landing pages & personal portfolios
+- Small business & professional websites
+- Mobile responsive — perfect on all devices
+- HTML coding & development guidance
+- Fast delivery — 3 to 7 business days
+
+💰 *Pricing:*
+- Landing Page (1–3 pages) ......... KES 15,000
+- Small Business Site (5 pages) .... KES 25,000
+- Full Business Website ............ KES 50,000+
+
+Please share a brief description of your project and we will send you a personalised quote right away.
+
+— Ashraf | TriBridge Services ⚜
+_"Speak It. Build It. Heal It."_</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">⚡ Quick Reply — French Translation</h3>
+  <p class="section-sub">Shortcut: /french</p>
+
+  <div class="reply-card french">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-french"></div>Translation Quick Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'wa-french')">Copy</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-french">shortcut: /french</span>
+    </div>
+    <div class="reply-body" id="wa-french">Thank you for your interest in our *French Translation* service ✦
+
+Here is everything you need to know:
+
+✅ *What we translate:*
+- School & university assignments
+- Business letters, emails & reports
+- Official documents & certificates
+- French → English and English → French
+- Proofreading & language correction
+
+💰 *Rates:*
+- Per page (250 words) ............. KES 500
+- Full document (1,000+ words) ..... KES 1,500
+- Proofreading only ................ KES 300/page
+
+Please send or describe your document and we will confirm the price and delivery time immediately. Urgent delivery is available.
+
+— Ashraf | TriBridge Services ⚜
+_"Speak It. Build It. Heal It."_</div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════ -->
+<!--           INSTAGRAM PANEL              -->
+<!-- ═══════════════════════════════════════ -->
+<div class="panel" id="panel-instagram">
+  <br>
+  <div class="platform-badge badge-ig">📷 &nbsp; Instagram — @tribridge_studios</div>
+
+  <div class="setup-steps">
+    <h3 class="section-title">How to Set Up Instagram Auto-Reply</h3>
+    <p class="section-sub">Uses Meta Business Suite — free, works on desktop and mobile.</p>
+    <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong><a href="https://business.facebook.com" target="_blank">business.facebook.com</a></strong> and log in with your Facebook account linked to your Instagram</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Click <strong>Inbox</strong> in the left sidebar → click <strong>Automations</strong> (top right of inbox)</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Click <strong>"Instant Reply"</strong> → toggle ON → select <strong>Instagram</strong> → paste the Instant Reply below → Save</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Click <strong>"Keyword Automations"</strong> → click <strong>"Create Automation"</strong> → add keywords + paste the matching reply for each service below</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text">For each keyword automation: add the trigger words shown, paste the reply, select <strong>Instagram</strong>, then save</div></div>
+  </div>
+
+  <div class="note">
+    <strong>Instagram tip:</strong> Keyword automations fire before the instant reply. So if someone types "counselling", they get the counselling-specific reply instead of the generic one. Set up all 3 keyword automations first.
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">⚡ Instant Reply (Default — all DMs)</h3>
+  <p class="section-sub">Sent to everyone who DMs you — before you reply personally</p>
+
+  <div class="reply-card general">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-general"></div>Instant Reply — Default</div>
+      <button class="copy-btn" onclick="copyBlock(this,'ig-instant')">Copy</button>
+    </div>
+    <div class="reply-body" id="ig-instant">Hey! Thanks for sliding into our DMs ✦
+
+Welcome to TriBridge Services — where excellence meets accessibility.
+
+We offer three premium services:
+
+🧠 Counselling — professional, online & confidential
+🌐 Web Development & HTML Coding
+🇫🇷 French ↔ English Translation & Assignments
+
+Tell me which service you need and I'll send you full details and pricing right away!
+
+🔗 tribridge-services.onrender.com
+
+— Ashraf | CEO & Founder, TriBridge Services
+"Speak It. Build It. Heal It." ⚜</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">🔑 Keyword Reply — Counselling</h3>
+  <p class="section-sub">Add these keywords in Meta Business Suite Keyword Automation</p>
+
+  <div class="reply-card counsel">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-counsel"></div>Counselling Keyword Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'ig-counsel')">Copy</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-counsel">counselling</span>
+      <span class="kw kw-counsel">therapy</span>
+      <span class="kw kw-counsel">stressed</span>
+      <span class="kw kw-counsel">session</span>
+      <span class="kw kw-counsel">mental health</span>
+    </div>
+    <div class="reply-body" id="ig-counsel">Thank you for reaching out about our Counselling service ✦
+
+You've come to the right place. Here's what we offer:
+
+🧠 Private online sessions — completely confidential
+✅ Certified counselling psychology background
+✅ Flexible scheduling around you
+✅ Judgment-free, safe space
+
+💰 Rates:
+- Single session (1 hr) — KES 800
+- 4-session package — KES 2,800
+- Monthly support — KES 5,000
+
+DM us to book your first session or ask any questions. We're here for you 💙
+
+— TriBridge Services ⚜
+"Speak It. Build It. Heal It."</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">🔑 Keyword Reply — Web Design</h3>
+  <p class="section-sub">Add these keywords in Meta Business Suite Keyword Automation</p>
+
+  <div class="reply-card web">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-web"></div>Web Design Keyword Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'ig-web')">Copy</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-web">website</span>
+      <span class="kw kw-web">web design</span>
+      <span class="kw kw-web">coding</span>
+      <span class="kw kw-web">HTML</span>
+      <span class="kw kw-web">portfolio</span>
+    </div>
+    <div class="reply-body" id="ig-web">Thank you for your interest in our Web Design service ✦
+
+Here's what we build for you:
+
+🌐 Landing pages, portfolios & business websites
+✅ Mobile responsive — looks great on all screens
+✅ Clean HTML code & fast delivery
+✅ Most projects done in 3–7 days
+
+💰 Pricing:
+- Landing Page (1–3 pages) — KES 15,000
+- Business Site (5 pages) — KES 25,000
+- Full Website — KES 50,000+
+
+Send us a brief about your project and we'll get you a quote within the hour!
+
+— TriBridge Services ⚜
+"Speak It. Build It. Heal It."</div>
+  </div>
+
+  <div class="section-divider"></div>
+  <h3 class="section-title">🔑 Keyword Reply — French Translation</h3>
+  <p class="section-sub">Add these keywords in Meta Business Suite Keyword Automation</p>
+
+  <div class="reply-card french">
+    <div class="reply-header">
+      <div class="reply-label"><div class="dot dot-french"></div>Translation Keyword Reply</div>
+      <button class="copy-btn" onclick="copyBlock(this,'ig-french')">Copy</button>
+    </div>
+    <div class="reply-keywords">
+      <span class="kw kw-french">translation</span>
+      <span class="kw kw-french">French</span>
+      <span class="kw kw-french">translate</span>
+      <span class="kw kw-french">assignment</span>
+      <span class="kw kw-french">document</span>
+    </div>
+    <div class="reply-body" id="ig-french">Thank you for reaching out about our Translation service ✦
+
+Here's what we offer:
+
+🇫🇷 French ↔ English translation, delivered online
+✅ Academic assignments & school work
+✅ Business documents & official letters
+✅ Fast delivery — urgent orders available
+
+💰 Rates:
+- Per page (250 words) — KES 500
+- Full document (1,000+ words) — KES 1,500
+- Proofreading only — KES 300/page
+
+Send us your document or describe what you need and we'll confirm price and delivery time immediately!
+
+— TriBridge Services ⚜
+"Speak It. Build It. Heal It."</div>
+  </div>
+</div>
+<script>
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  document.querySelectorAll('.tab').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyBlock(btn, id) {
+  var text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy Reply';
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+}
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+}
+</script>
+</body>
+</html>
